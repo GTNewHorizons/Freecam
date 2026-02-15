@@ -78,6 +78,11 @@ public class FreecamController {
     }
 
     public void toggleTripod(TripodSlot slot) {
+        if (GeneralConfig.disabled) {
+            AboveHotbarHUD.renderTextAboveHotbar(StatCollector.translateToLocal("msg.freecam.disable"), 20, true, true);
+            return;
+        }
+
         if (active && activeSlot == slot) {
             disable();
             AboveHotbarHUD.renderTextAboveHotbar(
