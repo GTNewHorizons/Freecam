@@ -11,7 +11,7 @@ public class MiscConfig {
     public static boolean fullBright;
 
     @Config.Comment("Disable fog when camera is submerged in water or lava")
-    @Config.DefaultBoolean(true)
+    @Config.DefaultBoolean(false)
     public static boolean disableSubmersionFog;
 
     @Config.Comment("Camera perspective when entering freecam")
@@ -23,16 +23,9 @@ public class MiscConfig {
     public static boolean showHand;
 
     public enum Perspective {
-
-        INSIDE(0),
-        FIRST_PERSON(0),
-        THIRD_PERSON(1),
-        THIRD_PERSON_MIRROR(2);
-
-        public final int thirdPersonView;
-
-        Perspective(int thirdPersonView) {
-            this.thirdPersonView = thirdPersonView;
-        }
+        INSIDE,
+        FIRST_PERSON,
+        THIRD_PERSON,
+        THIRD_PERSON_MIRROR
     }
 }

@@ -1,7 +1,6 @@
 package com.caedis.freecam.config;
 
 import com.caedis.freecam.FreecamMod;
-import com.caedis.freecam.camera.CollisionMode;
 import com.gtnewhorizon.gtnhlib.config.Config;
 
 @Config(modid = FreecamMod.MODID)
@@ -20,4 +19,11 @@ public class GeneralConfig {
     @Config.Comment("Disable freecam when the player takes damage")
     @Config.DefaultBoolean(true)
     public static boolean disableOnDamage;
+
+    public enum CollisionMode {
+        FULL,
+        IGNORE_TRANSPARENT,
+        IGNORE_OPENABLE,
+        NONE
+    }
 }

@@ -1,5 +1,7 @@
 package com.caedis.freecam;
 
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,6 +15,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkCheckHandler;
 import cpw.mods.fml.relauncher.Side;
 
 @Mod(
@@ -36,6 +39,16 @@ public class FreecamMod {
         } catch (ConfigException e) {
             LOG.error("Failed to register config", e);
         }
+    }
+
+    @NetworkCheckHandler
+    public boolean networkCheck(Map<String, String> remoteVersions, Side side) {
+        // client check if server has mod (side is the side being checked)
+        if (side == Side.SERVER) {
+            return remoteVersions.containsKey(MODID);
+        }
+        // server check if client has mod
+        return true;
     }
 
     @Mod.EventHandler
