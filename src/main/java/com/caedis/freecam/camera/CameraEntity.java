@@ -7,25 +7,29 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockFenceGate;
 import net.minecraft.block.BlockTrapDoor;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 import com.caedis.freecam.config.GeneralConfig;
+import com.mojang.authlib.GameProfile;
 
 import lombok.Setter;
 
-public class CameraEntity extends EntityLivingBase {
+public class CameraEntity extends EntityPlayer {
+
+    private static final GameProfile CAMERA_PROFILE = new GameProfile(null, "FreeCamEntity");
 
     @Setter
     private GeneralConfig.CollisionMode collisionMode = GeneralConfig.CollisionMode.FULL;
 
     public CameraEntity(World world, EntityPlayer player) {
-        super(world);
+        super(world, CAMERA_PROFILE);
         setSize(0.4F, 0.425F);
         yOffset = 1.62F;
         setPositionAndRotation(player.posX, player.posY, player.posZ, player.rotationYaw, player.rotationPitch);
@@ -37,6 +41,21 @@ public class CameraEntity extends EntityLivingBase {
         lastTickPosZ = posZ;
         prevRotationYaw = rotationYaw;
         prevRotationPitch = rotationPitch;
+    }
+
+    @Override
+    public void addChatMessage(IChatComponent message) {
+        // noop
+    }
+
+    @Override
+    public boolean canCommandSenderUseCommand(int permissionLevel, String command) {
+        return false;
+    }
+
+    @Override
+    public ChunkCoordinates getPlayerCoordinates() {
+        return new ChunkCoordinates(0, 0, 0);
     }
 
     @Override
@@ -158,6 +177,26 @@ public class CameraEntity extends EntityLivingBase {
     @Override
     public boolean isEntityAlive() {
         return true;
+    }
+
+    @Override
+    public boolean isEntityInsideOpaqueBlock() {
+        return false;
+    }
+
+    @Override
+    public boolean canBePushed() {
+        return false;
+    }
+
+    @Override
+    public boolean canBeCollidedWith() {
+        return false;
+    }
+
+    @Override
+    public boolean isSneaking() {
+        return false;
     }
 
     @Override

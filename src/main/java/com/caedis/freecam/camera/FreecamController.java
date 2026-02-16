@@ -285,6 +285,23 @@ public class FreecamController {
         } else {
             tickDefaultMovement(forward, back, left, right, up, down, speed * DEFAULT_SPEED_SCALE);
         }
+
+        clampToRenderDistance();
+    }
+
+    private void clampToRenderDistance() {
+        if (mc.thePlayer == null) return;
+
+        double maxDist = (mc.gameSettings.renderDistanceChunks - 1) * 16.0;
+        double dx = cameraEntity.posX - mc.thePlayer.posX;
+        double dz = cameraEntity.posZ - mc.thePlayer.posZ;
+
+        double clampedX = Math.max(-maxDist, Math.min(maxDist, dx));
+        double clampedZ = Math.max(-maxDist, Math.min(maxDist, dz));
+
+        if (clampedX != dx || clampedZ != dz) {
+            cameraEntity.setPosition(mc.thePlayer.posX + clampedX, cameraEntity.posY, mc.thePlayer.posZ + clampedZ);
+        }
     }
 
     private void tickDefaultMovement(boolean forward, boolean back, boolean left, boolean right, boolean up,
