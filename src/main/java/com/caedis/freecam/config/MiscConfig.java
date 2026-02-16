@@ -11,7 +11,7 @@ public class MiscConfig {
     public static boolean fullBright;
 
     @Config.Comment("Disable fog when camera is submerged in water or lava")
-    @Config.DefaultBoolean(true)
+    @Config.DefaultBoolean(false)
     public static boolean disableSubmersionFog;
 
     @Config.Comment("Camera perspective when entering freecam")
