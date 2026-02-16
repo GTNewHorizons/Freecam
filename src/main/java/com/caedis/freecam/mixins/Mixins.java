@@ -17,7 +17,10 @@ public enum Mixins implements IMixins {
             "minecraft.MixinMovementInputFromOptions",
             "minecraft.MixinMinecraft",
             "minecraft.MixinEntityLivingBase"
-        ));
+        )),
+    ANGELICA(new MixinBuilder().setPhase(Phase.EARLY)
+        .addClientMixins("angelica.MixinHandRenderer")
+        .addRequiredMod(TargetedMod.ANGELICA));
     // spotless:on
 
     private final MixinBuilder builder;
