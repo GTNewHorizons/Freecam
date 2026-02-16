@@ -1,17 +1,17 @@
 package com.caedis.freecam.mixins.early.minecraft;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.GameSettings;
 
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.caedis.freecam.camera.FreecamController;
-import com.llamalad7.mixinextras.expression.Definition;
-import com.llamalad7.mixinextras.expression.Expression;
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 @Mixin(Minecraft.class)
 public class MixinMinecraft {
@@ -22,21 +22,20 @@ public class MixinMinecraft {
         return controller.isActive() && !controller.isPlayerControlled();
     }
 
-    @Definition(
-        id = "gameSettings",
-        field = "Lnet/minecraft/client/Minecraft;gameSettings:Lnet/minecraft/client/settings/GameSettings;")
-    @Definition(
-        id = "keyBindTogglePerspective",
-        field = "Lnet/minecraft/client/settings/GameSettings;keyBindTogglePerspective:Lnet/minecraft/client/settings/KeyBinding;")
-    @Definition(id = "isPressed", method = "Lnet/minecraft/client/settings/KeyBinding;isPressed()Z")
-    @Expression("this.gameSettings.keyBindTogglePerspective.isPressed()")
-    @ModifyExpressionValue(method = "runTick", at = @At("MIXINEXTRAS:EXPRESSION"))
-    private boolean freecam$blockPerspectiveToggle(boolean original) {
+    @Redirect(
+        method = "runTick",
+        at = @At(
+            value = "FIELD",
+            target = "Lnet/minecraft/client/settings/GameSettings;thirdPersonView:I",
+            opcode = Opcodes.PUTFIELD))
+    private void freecam$blockPerspectiveToggle(GameSettings instance, int value) {
         if (FreecamController.instance()
             .isActive()) {
-            return false;
+            instance.thirdPersonView = 0;
+            return;
         }
-        return original;
+
+        instance.thirdPersonView = value;
     }
 
     @Inject(method = "func_147115_a", at = @At("HEAD"), cancellable = true)
