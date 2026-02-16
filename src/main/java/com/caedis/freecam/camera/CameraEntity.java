@@ -144,6 +144,11 @@ public class CameraEntity extends EntityLivingBase {
     }
 
     @Override
+    public boolean isInvisible() {
+        return true;
+    }
+
+    @Override
     public float getEyeHeight() {
         return 0.0F;
     }
