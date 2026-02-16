@@ -15,12 +15,14 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
+import com.caedis.freecam.config.GeneralConfig;
+
 import lombok.Setter;
 
 public class CameraEntity extends EntityLivingBase {
 
     @Setter
-    private CollisionMode collisionMode = CollisionMode.FULL;
+    private GeneralConfig.CollisionMode collisionMode = GeneralConfig.CollisionMode.FULL;
 
     public CameraEntity(World world, EntityPlayer player) {
         super(world);
@@ -62,10 +64,10 @@ public class CameraEntity extends EntityLivingBase {
 
     @Override
     public void moveEntity(double dx, double dy, double dz) {
-        if (collisionMode == CollisionMode.NONE) {
+        if (collisionMode == GeneralConfig.CollisionMode.NONE) {
             noClip = true;
             setPosition(posX + dx, posY + dy, posZ + dz);
-        } else if (collisionMode == CollisionMode.FULL) {
+        } else if (collisionMode == GeneralConfig.CollisionMode.FULL) {
             noClip = false;
             super.moveEntity(dx, dy, dz);
             // Fix posY: super derives it as bb.minY + yOffset - ySize, but we want bb center
