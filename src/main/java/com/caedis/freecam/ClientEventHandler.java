@@ -50,8 +50,6 @@ public class ClientEventHandler {
             }
         }
         if (controller.isActive()) {
-            // disable perspective swap key while in freecam
-            while (Minecraft.getMinecraft().gameSettings.keyBindTogglePerspective.isPressed()) {}
             controller.tick();
         }
     }
