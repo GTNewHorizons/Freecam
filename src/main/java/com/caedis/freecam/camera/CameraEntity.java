@@ -26,7 +26,7 @@ public class CameraEntity extends EntityLivingBase {
 
     public CameraEntity(World world, EntityPlayer player) {
         super(world);
-        setSize(0.4F, 0.2F);
+        setSize(0.45F, 0.45F);
         yOffset = 1.62F;
         setPositionAndRotation(player.posX, player.posY, player.posZ, player.rotationYaw, player.rotationPitch);
         prevPosX = posX;
