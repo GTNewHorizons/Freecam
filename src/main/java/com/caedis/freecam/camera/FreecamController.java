@@ -131,6 +131,10 @@ public class FreecamController {
         cameraEntity = tripodRegistry.getOrCreate(slot);
         cameraEntity.setCollisionMode(GeneralConfig.collisionMode);
         previousRenderViewEntity = mc.renderViewEntity;
+        if (previousPerspective == -1) {
+            previousPerspective = mc.gameSettings.thirdPersonView;
+            mc.gameSettings.thirdPersonView = 0;
+        }
         mc.renderViewEntity = cameraEntity;
         active = true;
         playerControlled = false;
