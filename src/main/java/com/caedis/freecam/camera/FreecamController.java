@@ -112,6 +112,8 @@ public class FreecamController {
         cameraEntity = new CameraEntity(mc.theWorld, mc.thePlayer);
         cameraEntity.setCollisionMode(GeneralConfig.collisionMode);
         previousRenderViewEntity = mc.renderViewEntity;
+        previousPerspective = mc.gameSettings.thirdPersonView;
+        mc.gameSettings.thirdPersonView = 0;
         mc.renderViewEntity = cameraEntity;
         active = true;
         playerControlled = false;
@@ -120,10 +122,7 @@ public class FreecamController {
         velocityY = 0;
         velocityZ = 0;
 
-        if (MiscConfig.initialPerspective != MiscConfig.Perspective.INSIDE) {
-            previousPerspective = mc.gameSettings.thirdPersonView;
-            mc.gameSettings.thirdPersonView = MiscConfig.initialPerspective.thirdPersonView;
-        }
+        applyPerspectiveOffset();
     }
 
     private void enableTripod(TripodSlot slot) {
@@ -139,11 +138,6 @@ public class FreecamController {
         velocityX = 0;
         velocityY = 0;
         velocityZ = 0;
-
-        if (MiscConfig.initialPerspective != MiscConfig.Perspective.INSIDE) {
-            previousPerspective = mc.gameSettings.thirdPersonView;
-            mc.gameSettings.thirdPersonView = MiscConfig.initialPerspective.thirdPersonView;
-        }
     }
 
     private void switchTripod(TripodSlot slot) {
@@ -160,14 +154,49 @@ public class FreecamController {
         if (!active) return;
 
         mc.renderViewEntity = previousRenderViewEntity;
+        mc.gameSettings.thirdPersonView = previousPerspective;
+        previousPerspective = -1;
         previousRenderViewEntity = null;
         cameraEntity = null;
         active = false;
         activeSlot = TripodSlot.NONE;
+    }
 
-        if (previousPerspective >= 0) {
-            mc.gameSettings.thirdPersonView = previousPerspective;
-            previousPerspective = -1;
+    private static final double THIRD_PERSON_DISTANCE = 4.0;
+    private static final double FIRST_PERSON_DISTANCE = 0.4;
+
+    // main logic from orientCamera
+    private void applyPerspectiveOffset() {
+        MiscConfig.Perspective perspective = MiscConfig.initialPerspective;
+        if (perspective == MiscConfig.Perspective.INSIDE) {
+            return;
+        }
+
+        double yawRad = Math.toRadians(cameraEntity.rotationYaw);
+        double pitchRad = Math.toRadians(cameraEntity.rotationPitch);
+
+        double lookX = -Math.sin(yawRad) * Math.cos(pitchRad);
+        double lookY = -Math.sin(pitchRad);
+        double lookZ = Math.cos(yawRad) * Math.cos(pitchRad);
+
+        if (perspective == MiscConfig.Perspective.FIRST_PERSON) {
+            // move just in front of eyes
+            cameraEntity.setPosition(
+                cameraEntity.posX + lookX * FIRST_PERSON_DISTANCE,
+                cameraEntity.posY + lookY * FIRST_PERSON_DISTANCE,
+                cameraEntity.posZ + lookZ * FIRST_PERSON_DISTANCE);
+        } else if (perspective == MiscConfig.Perspective.THIRD_PERSON) {
+            cameraEntity.setPosition(
+                cameraEntity.posX - lookX * THIRD_PERSON_DISTANCE,
+                cameraEntity.posY - lookY * THIRD_PERSON_DISTANCE,
+                cameraEntity.posZ - lookZ * THIRD_PERSON_DISTANCE);
+        } else if (perspective == MiscConfig.Perspective.THIRD_PERSON_MIRROR) {
+            cameraEntity.setPosition(
+                cameraEntity.posX + lookX * THIRD_PERSON_DISTANCE,
+                cameraEntity.posY + lookY * THIRD_PERSON_DISTANCE,
+                cameraEntity.posZ + lookZ * THIRD_PERSON_DISTANCE);
+            cameraEntity.rotationYaw += 180.0F;
+            cameraEntity.prevRotationYaw += 180.0F;
         }
     }
 

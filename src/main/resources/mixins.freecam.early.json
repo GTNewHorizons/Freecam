@@ -7,5 +7,6 @@
   "injectors":{
     "maxShiftBy": 2
   },
-  "compatibilityLevel": "JAVA_8"
+  "compatibilityLevel": "JAVA_8",
+  "mixinextras": {"minVersion": "0.5.0"}
 }
