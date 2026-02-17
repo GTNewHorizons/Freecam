@@ -30,6 +30,7 @@ public class FreecamController {
     private TripodSlot activeSlot = TripodSlot.NONE;
     private boolean pendingDisable;
     private int previousPerspective = -1;
+    private float previousGamma = -1f;
     private float speedMultiplier = 1.0F;
 
     private static final float SPEED_SCROLL_STEP = 0.1F;
@@ -114,6 +115,10 @@ public class FreecamController {
         previousRenderViewEntity = mc.renderViewEntity;
         previousPerspective = mc.gameSettings.thirdPersonView;
         mc.gameSettings.thirdPersonView = 0;
+        if (MiscConfig.fullBright) {
+            previousGamma = mc.gameSettings.gammaSetting;
+            mc.gameSettings.gammaSetting = 100f;
+        }
         mc.renderViewEntity = cameraEntity;
         active = true;
         playerControlled = false;
@@ -134,6 +139,10 @@ public class FreecamController {
         if (previousPerspective == -1) {
             previousPerspective = mc.gameSettings.thirdPersonView;
             mc.gameSettings.thirdPersonView = 0;
+        }
+        if (previousGamma == -1f && MiscConfig.fullBright) {
+            previousGamma = mc.gameSettings.gammaSetting;
+            mc.gameSettings.gammaSetting = 100f;
         }
         mc.renderViewEntity = cameraEntity;
         active = true;
@@ -160,6 +169,10 @@ public class FreecamController {
         mc.renderViewEntity = previousRenderViewEntity;
         mc.gameSettings.thirdPersonView = previousPerspective;
         previousPerspective = -1;
+        if (previousGamma != -1f) {
+            mc.gameSettings.gammaSetting = previousGamma;
+            previousGamma = -1;
+        }
         previousRenderViewEntity = null;
         cameraEntity = null;
         active = false;
