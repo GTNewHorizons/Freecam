@@ -13,6 +13,7 @@ import com.gtnewhorizons.angelica.zoom.Zoom;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -115,12 +116,17 @@ public class ClientEventHandler {
         if (!FreecamController.instance()
             .isActive()) return;
 
-        if (ANGELICA_LOADED && Zoom.getZoomKey()
-            .getIsKeyPressed()) return;
+        if (ANGELICA_LOADED && freecam$isAngelicaZoomKeyPressed()) return;
 
         FreecamController.instance()
             .adjustSpeed(event.dwheel);
         event.setCanceled(true);
+    }
+
+    @Optional.Method(modid = "angelica")
+    private boolean freecam$isAngelicaZoomKeyPressed() {
+        return Zoom.getZoomKey()
+            .getIsKeyPressed();
     }
 
     @SubscribeEvent
