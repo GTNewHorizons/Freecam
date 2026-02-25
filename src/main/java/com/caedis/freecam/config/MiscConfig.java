@@ -6,10 +6,12 @@ import com.gtnewhorizon.gtnhlib.config.Config;
 @Config(modid = FreecamMod.MODID, category = "misc")
 public class MiscConfig {
 
+    @Config.Sync
     @Config.Comment("Enable full brightness while in freecam")
     @Config.DefaultBoolean(false)
     public static boolean fullBright;
 
+    @Config.Sync
     @Config.Comment("Disable fog when camera is submerged in water or lava")
     @Config.DefaultBoolean(false)
     public static boolean disableSubmersionFog;

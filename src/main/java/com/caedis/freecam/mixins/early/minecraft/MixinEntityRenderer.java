@@ -1,21 +1,16 @@
 package com.caedis.freecam.mixins.early.minecraft;
 
-import java.util.Arrays;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -26,24 +21,6 @@ import com.caedis.freecam.config.MiscConfig;
 
 @Mixin(EntityRenderer.class)
 public class MixinEntityRenderer {
-
-    @Shadow
-    @Final
-    private int[] lightmapColors;
-
-    @Shadow
-    @Final
-    private DynamicTexture lightmapTexture;
-
-    @Inject(method = "updateLightmap", at = @At("HEAD"), cancellable = true)
-    private void freecam$fullBright(float partialTicks, CallbackInfo ci) {
-        if (FreecamController.instance()
-            .isActive() && MiscConfig.fullBright) {
-            Arrays.fill(lightmapColors, 0xFFFFFFFF);
-            lightmapTexture.updateDynamicTexture();
-            ci.cancel();
-        }
-    }
 
     @Redirect(
         method = "updateCameraAndRender",
