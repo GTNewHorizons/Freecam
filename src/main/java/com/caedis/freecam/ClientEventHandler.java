@@ -9,8 +9,11 @@ import org.lwjgl.input.Keyboard;
 
 import com.caedis.freecam.camera.FreecamController;
 import com.caedis.freecam.camera.tripod.TripodSlot;
+import com.gtnewhorizons.angelica.zoom.Zoom;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -18,11 +21,16 @@ import cpw.mods.fml.common.network.FMLNetworkEvent;
 
 public class ClientEventHandler {
 
+    private final boolean ANGELICA_LOADED;
     public static KeyBinding toggleKey;
     public static KeyBinding resetTripodsKey;
     public static KeyBinding playerControlKey;
     private boolean toggleKeyHeld;
     private boolean tripodActivated;
+
+    public ClientEventHandler() {
+        ANGELICA_LOADED = Loader.isModLoaded("angelica");
+    }
 
     public void init() {
         String category = "key.categories.freecam";
@@ -104,12 +112,21 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void onMouseEvent(MouseEvent event) {
-        if (event.dwheel != 0 && FreecamController.instance()
-            .isActive()) {
-            FreecamController.instance()
-                .adjustSpeed(event.dwheel);
-            event.setCanceled(true);
-        }
+        if (event.dwheel == 0) return;
+        if (!FreecamController.instance()
+            .isActive()) return;
+
+        if (ANGELICA_LOADED && freecam$isAngelicaZoomKeyPressed()) return;
+
+        FreecamController.instance()
+            .adjustSpeed(event.dwheel);
+        event.setCanceled(true);
+    }
+
+    @Optional.Method(modid = "angelica")
+    private boolean freecam$isAngelicaZoomKeyPressed() {
+        return Zoom.getZoomKey()
+            .getIsKeyPressed();
     }
 
     @SubscribeEvent
