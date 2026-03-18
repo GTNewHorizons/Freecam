@@ -3,7 +3,6 @@ package com.caedis.freecam;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.event.MouseEvent;
-import net.minecraftforge.common.MinecraftForge;
 
 import org.lwjgl.input.Keyboard;
 
@@ -22,23 +21,20 @@ import ganymedes01.etfuturum.configuration.configs.ConfigFunctions;
 
 public class ClientEventHandler {
 
-    public static KeyBinding toggleKey;
-    public static KeyBinding resetTripodsKey;
-    public static KeyBinding playerControlKey;
+    private final KeyBinding toggleKey;
+    private final KeyBinding resetTripodsKey;
+    private final KeyBinding playerControlKey;
     private boolean toggleKeyHeld;
     private boolean tripodActivated;
 
-    public void init() {
-        String category = "key.categories.freecam";
+    public ClientEventHandler() {
+        final String category = "key.categories.freecam";
         toggleKey = new KeyBinding("key.freecam.toggle", Keyboard.KEY_F4, category);
-        resetTripodsKey = new KeyBinding("key.freecam.resetTripods", Keyboard.KEY_R, category);
-        playerControlKey = new KeyBinding("key.freecam.playerControl", Keyboard.KEY_C, category);
-
+        resetTripodsKey = new KeyBinding("key.freecam.resetTripods", Keyboard.KEY_NONE, category);
+        playerControlKey = new KeyBinding("key.freecam.playerControl", Keyboard.KEY_NONE, category);
         ClientRegistry.registerKeyBinding(toggleKey);
         ClientRegistry.registerKeyBinding(resetTripodsKey);
         ClientRegistry.registerKeyBinding(playerControlKey);
-
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent

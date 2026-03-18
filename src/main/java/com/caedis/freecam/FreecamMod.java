@@ -2,6 +2,8 @@ package com.caedis.freecam;
 
 import java.util.Map;
 
+import net.minecraftforge.common.MinecraftForge;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -55,11 +57,12 @@ public class FreecamMod {
     public void init(FMLInitializationEvent event) {
         if (FMLCommonHandler.instance()
             .getSide() == Side.CLIENT) {
-            ClientEventHandler clientHandler = new ClientEventHandler();
-            clientHandler.init();
+            final ClientEventHandler handler = new ClientEventHandler();
             FMLCommonHandler.instance()
                 .bus()
-                .register(clientHandler);
+                .register(handler);
+            MinecraftForge.EVENT_BUS.register(handler);
+
         }
     }
 }
