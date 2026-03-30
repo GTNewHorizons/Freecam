@@ -9,7 +9,7 @@ public enum Mods {
     // spotless:off
     ANGELICA("angelica"),
     CONTROLLING(() -> Loader.isModLoaded("controlling")
-        && classExists("com.blamejared.controlling.keybinding.ComboKeyBinding")),
+        && classFileExists("com/blamejared/controlling/keybinding/ComboKeyBinding.class")),
     EFR("etfuturum")
     ;
     // spotless:on
@@ -39,12 +39,8 @@ public enum Mods {
         return loaded;
     }
 
-    private static boolean classExists(String className) {
-        try {
-            Class.forName(className);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
+    private static boolean classFileExists(String classFilePath) {
+        return Mods.class.getClassLoader()
+            .getResource(classFilePath) != null;
     }
 }
