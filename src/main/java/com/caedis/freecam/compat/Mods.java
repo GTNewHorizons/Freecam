@@ -8,6 +8,7 @@ public enum Mods {
 
     // spotless:off
     ANGELICA("angelica"),
+    CONTROLLING("controlling"),
     EFR("etfuturum")
     ;
     // spotless:on

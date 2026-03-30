@@ -6,6 +6,7 @@ dependencies {
 
     compileOnly("com.github.GTNewHorizons:Angelica:2.0.0-alpha23:dev")
     compileOnly("ganymedes01.etfuturum:Et-Futurum-Requiem:2.6.2.28-GTNH:dev")
+    compileOnly("com.github.GTNewHorizons:Controlling:2.1.7:dev")
 
     runtimeOnlyNonPublishable("curse.maven:archaicfix-677782:6785842")
 }

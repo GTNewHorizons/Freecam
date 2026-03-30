@@ -6,6 +6,7 @@ import net.minecraftforge.client.event.MouseEvent;
 
 import org.lwjgl.input.Keyboard;
 
+import com.blamejared.controlling.keybinding.ComboKeyBinding;
 import com.caedis.freecam.camera.FreecamController;
 import com.caedis.freecam.camera.tripod.TripodSlot;
 import com.caedis.freecam.compat.Mods;
@@ -59,7 +60,7 @@ public class ClientEventHandler {
         int key = Keyboard.getEventKey();
         boolean pressed = Keyboard.getEventKeyState();
 
-        if (key == toggleKey.getKeyCode()) {
+        if (matchesKeyBinding(toggleKey, key)) {
             if (Mods.EFR.isLoaded() && isEFRGameModeSwitcherKeyPressed()) return;
 
             // drain the KeyBinding queue so it doesn't fire elsewhere
@@ -88,13 +89,13 @@ public class ClientEventHandler {
                         .toggleTripod(slot);
                     tripodActivated = true;
                 }
-            } else if (!pressed && key == resetTripodsKey.getKeyCode()) {
+            } else if (!pressed && matchesKeyBinding(resetTripodsKey, key)) {
                 // drain it
                 while (resetTripodsKey.isPressed()) {}
                 FreecamController.instance()
                     .resetTripods();
                 tripodActivated = true;
-            } else if (!pressed && key == playerControlKey.getKeyCode()) {
+            } else if (!pressed && matchesKeyBinding(playerControlKey, key)) {
                 // drain it
                 while (playerControlKey.isPressed()) {}
                 FreecamController.instance()
@@ -126,6 +127,20 @@ public class ClientEventHandler {
     @Optional.Method(modid = "etfuturum")
     private boolean isEFRGameModeSwitcherKeyPressed() {
         return ConfigFunctions.enableGamemodeSwitcher && Keyboard.isKeyDown(Keyboard.KEY_F3);
+    }
+
+    private boolean matchesKeyBinding(KeyBinding binding, int keyCode) {
+        if (keyCode != binding.getKeyCode()) return false;
+        if (Mods.CONTROLLING.isLoaded()) return isComboModifierActive(binding);
+        return true;
+    }
+
+    @Optional.Method(modid = "controlling")
+    private boolean isComboModifierActive(KeyBinding binding) {
+        if (binding instanceof ComboKeyBinding combo) {
+            return combo.controlling$isModifierActive();
+        }
+        return true;
     }
 
     @SubscribeEvent
