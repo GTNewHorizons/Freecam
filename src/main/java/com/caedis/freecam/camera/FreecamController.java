@@ -5,6 +5,8 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.StatCollector;
 
+import org.lwjgl.input.Keyboard;
+
 import com.caedis.freecam.camera.tripod.TripodRegistry;
 import com.caedis.freecam.camera.tripod.TripodSlot;
 import com.caedis.freecam.config.GeneralConfig;
@@ -280,13 +282,13 @@ public class FreecamController {
         if (playerControlled) return;
 
         GameSettings gs = mc.gameSettings;
-        boolean forward = gs.keyBindForward.getIsKeyPressed();
-        boolean back = gs.keyBindBack.getIsKeyPressed();
-        boolean left = gs.keyBindLeft.getIsKeyPressed();
-        boolean right = gs.keyBindRight.getIsKeyPressed();
-        boolean up = gs.keyBindJump.getIsKeyPressed();
-        boolean down = gs.keyBindSneak.getIsKeyPressed();
-        boolean sprint = gs.keyBindSprint.getIsKeyPressed();
+        boolean forward = Keyboard.isKeyDown(gs.keyBindForward.getKeyCode());
+        boolean back = Keyboard.isKeyDown(gs.keyBindBack.getKeyCode());
+        boolean left = Keyboard.isKeyDown(gs.keyBindLeft.getKeyCode());
+        boolean right = Keyboard.isKeyDown(gs.keyBindRight.getKeyCode());
+        boolean up = Keyboard.isKeyDown(gs.keyBindJump.getKeyCode());
+        boolean down = Keyboard.isKeyDown(gs.keyBindSneak.getKeyCode());
+        boolean sprint = Keyboard.isKeyDown(gs.keyBindSprint.getKeyCode());
 
         double speed = MovementConfig.speed * speedMultiplier;
         if (sprint) {
