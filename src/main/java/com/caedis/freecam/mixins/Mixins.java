@@ -17,9 +17,6 @@ public enum Mixins implements IMixins {
             "minecraft.MixinMovementInputFromOptions",
             "minecraft.MixinMinecraft",
             "minecraft.MixinEntityLivingBase"
-        )
-        .addClientMixins(
-            "ic2.MixinIC2KeyboardClient"
         )),
     ANGELICA(new MixinBuilder().setPhase(Phase.EARLY)
         .addClientMixins("angelica.MixinHandRenderer")
