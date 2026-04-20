@@ -14,6 +14,7 @@ import com.gtnewhorizons.angelica.zoom.Zoom;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.Optional;
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -36,6 +37,23 @@ public class ClientEventHandler {
         ClientRegistry.registerKeyBinding(toggleKey);
         ClientRegistry.registerKeyBinding(resetTripodsKey);
         ClientRegistry.registerKeyBinding(playerControlKey);
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onUnpressMovementKeys(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.START) return;
+        if (event.side != cpw.mods.fml.relauncher.Side.CLIENT) return;
+        FreecamController controller = FreecamController.instance();
+        if (!controller.isActive() || controller.isPlayerControlled()) return;
+
+        var gs = Minecraft.getMinecraft().gameSettings;
+        KeyBinding.setKeyBindState(gs.keyBindForward.getKeyCode(), false);
+        KeyBinding.setKeyBindState(gs.keyBindBack.getKeyCode(), false);
+        KeyBinding.setKeyBindState(gs.keyBindLeft.getKeyCode(), false);
+        KeyBinding.setKeyBindState(gs.keyBindRight.getKeyCode(), false);
+        KeyBinding.setKeyBindState(gs.keyBindJump.getKeyCode(), false);
+        KeyBinding.setKeyBindState(gs.keyBindSneak.getKeyCode(), false);
+        KeyBinding.setKeyBindState(gs.keyBindSprint.getKeyCode(), false);
     }
 
     @SubscribeEvent
