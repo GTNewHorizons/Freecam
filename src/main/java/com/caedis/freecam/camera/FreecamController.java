@@ -32,7 +32,6 @@ public class FreecamController {
     private TripodSlot activeSlot = TripodSlot.NONE;
     private boolean pendingDisable;
     private int previousPerspective = -1;
-    private float previousGamma = -1f;
     private float speedMultiplier = 1.0F;
 
     private static final float SPEED_SCROLL_STEP = 0.1F;
@@ -117,10 +116,6 @@ public class FreecamController {
         previousRenderViewEntity = mc.renderViewEntity;
         previousPerspective = mc.gameSettings.thirdPersonView;
         mc.gameSettings.thirdPersonView = 0;
-        if (MiscConfig.fullBright) {
-            previousGamma = mc.gameSettings.gammaSetting;
-            mc.gameSettings.gammaSetting = 100f;
-        }
         mc.renderViewEntity = cameraEntity;
         active = true;
         playerControlled = false;
@@ -141,10 +136,6 @@ public class FreecamController {
         if (previousPerspective == -1) {
             previousPerspective = mc.gameSettings.thirdPersonView;
             mc.gameSettings.thirdPersonView = 0;
-        }
-        if (previousGamma == -1f && MiscConfig.fullBright) {
-            previousGamma = mc.gameSettings.gammaSetting;
-            mc.gameSettings.gammaSetting = 100f;
         }
         mc.renderViewEntity = cameraEntity;
         active = true;
@@ -171,10 +162,6 @@ public class FreecamController {
         mc.renderViewEntity = previousRenderViewEntity;
         mc.gameSettings.thirdPersonView = previousPerspective;
         previousPerspective = -1;
-        if (previousGamma != -1f) {
-            mc.gameSettings.gammaSetting = previousGamma;
-            previousGamma = -1;
-        }
         previousRenderViewEntity = null;
         cameraEntity = null;
         active = false;
@@ -183,6 +170,10 @@ public class FreecamController {
 
     private static final double THIRD_PERSON_DISTANCE = 4.0;
     private static final double FIRST_PERSON_DISTANCE = 0.4;
+
+    // Chunks to subtract from render distance when clamping the camera. Higher = more aggressive,
+    // keeps the camera further from the border where ore could be xrayed.
+    private static final int CLAMP_MARGIN_CHUNKS = 2;
 
     // main logic from orientCamera
     private void applyPerspectiveOffset() {
@@ -307,15 +298,21 @@ public class FreecamController {
     private void clampToRenderDistance() {
         if (mc.thePlayer == null) return;
 
-        double maxDist = (mc.gameSettings.renderDistanceChunks - 1) * 16.0;
+        // Stay well inside the render distance edge
+        double maxDist = (mc.gameSettings.renderDistanceChunks - CLAMP_MARGIN_CHUNKS) * 16.0;
+        if (maxDist < 0) maxDist = 0;
+
         double dx = cameraEntity.posX - mc.thePlayer.posX;
+        double dy = cameraEntity.posY - mc.thePlayer.posY;
         double dz = cameraEntity.posZ - mc.thePlayer.posZ;
 
-        double clampedX = Math.max(-maxDist, Math.min(maxDist, dx));
-        double clampedZ = Math.max(-maxDist, Math.min(maxDist, dz));
-
-        if (clampedX != dx || clampedZ != dz) {
-            cameraEntity.setPosition(mc.thePlayer.posX + clampedX, cameraEntity.posY, mc.thePlayer.posZ + clampedZ);
+        // Radial (spherical) clamp on all three axes. Move via moveEntity (not setPosition) so the
+        // correction is collision-aware and never stuffs the camera into a block when the player
+        // walks away from a tripod.
+        double distSq = dx * dx + dy * dy + dz * dz;
+        if (distSq > maxDist * maxDist) {
+            double scale = maxDist / Math.sqrt(distSq);
+            cameraEntity.moveEntity(dx * (scale - 1), dy * (scale - 1), dz * (scale - 1));
         }
     }
 
