@@ -6,10 +6,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -60,6 +62,22 @@ public class MixinEntityRenderer {
             }
             ci.cancel();
         }
+    }
+
+    @Redirect(
+        method = "updateLightmap",
+        at = @At(
+            value = "FIELD",
+            target = "Lnet/minecraft/client/settings/GameSettings;gammaSetting:F",
+            opcode = Opcodes.GETFIELD))
+    private float freecam$fullbrightGamma(GameSettings settings) {
+        // Apply fullbright at render time instead of mutating the persistent gammaSetting, so a
+        // force-quit while in freecam cannot leave the saved gamma stuck on full bright.
+        if (FreecamController.instance()
+            .isActive() && MiscConfig.fullBright) {
+            return 100.0F;
+        }
+        return settings.gammaSetting;
     }
 
     @Inject(method = "renderHand", at = @At("HEAD"), cancellable = true)

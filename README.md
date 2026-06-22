@@ -8,6 +8,7 @@ Camera hitbox is below .5 blocks so it can even fit under a top slab and in the 
 Tripod system - Saved camera positions by holding the toggle key and pressing a number key  
 4 collision modes: Full, Ignore Transparent (non-opaque blocks including openables), Ignore Openables (doors, trapdoors, etc) and None (noclip)  
 Config options for fullbright, fog removal, hand rendering, and initial perspective  
+Camera is clamped to a sphere inside the player's render distance
 Server owners can include the mod to force the collision mode or to disable the mod entirely for players  
 The server must have the mod if the client has the mod. Mod is optional if server has the mod
 

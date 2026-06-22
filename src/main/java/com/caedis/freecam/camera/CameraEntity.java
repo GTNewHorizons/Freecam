@@ -28,6 +28,9 @@ public class CameraEntity extends EntityPlayer {
     @Setter
     private GeneralConfig.CollisionMode collisionMode = GeneralConfig.CollisionMode.FULL;
 
+    // Reused across collision sub-steps so fast movement doesn't allocate a list per step.
+    private final List<AxisAlignedBB> collisionScratch = new ArrayList<>();
+
     public CameraEntity(World world, EntityPlayer player) {
         super(world, CAMERA_PROFILE);
         setSize(0.4F, 0.425F);
@@ -81,12 +84,35 @@ public class CameraEntity extends EntityPlayer {
         prevRotationYawHead = rotationYawHead;
     }
 
+    // Max distance moved per collision sub-step. Smaller than the hitbox so a fast camera cannot
+    // tunnel or peek through a thin block in a single tick.
+    private static final double MAX_STEP = 0.2D;
+    // Upper bound on sub-steps to avoid huge collision scans on extreme deltas (e.g. teleports).
+    private static final int MAX_STEPS = 64;
+
     @Override
     public void moveEntity(double dx, double dy, double dz) {
         if (collisionMode == GeneralConfig.CollisionMode.NONE) {
             noClip = true;
             setPosition(posX + dx, posY + dy, posZ + dz);
-        } else if (collisionMode == GeneralConfig.CollisionMode.FULL) {
+            return;
+        }
+
+        // Split large movements so swept collision resolves in small increments instead of letting
+        // a fast camera stop flush inside/through thin geometry.
+        double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        int steps = dist > MAX_STEP ? Math.min(MAX_STEPS, (int) Math.ceil(dist / MAX_STEP)) : 1;
+        double sx = dx / steps;
+        double sy = dy / steps;
+        double sz = dz / steps;
+
+        for (int i = 0; i < steps; i++) {
+            moveStep(sx, sy, sz);
+        }
+    }
+
+    private void moveStep(double dx, double dy, double dz) {
+        if (collisionMode == GeneralConfig.CollisionMode.FULL) {
             noClip = false;
             super.moveEntity(dx, dy, dz);
             // Fix posY: super derives it as bb.minY + yOffset - ySize, but we want bb center
@@ -129,7 +155,8 @@ public class CameraEntity extends EntityPlayer {
     }
 
     private List<AxisAlignedBB> getFilteredCollisionBoxes(AxisAlignedBB area) {
-        List<AxisAlignedBB> result = new ArrayList<>();
+        List<AxisAlignedBB> result = collisionScratch;
+        result.clear();
 
         int minX = MathHelper.floor_double(area.minX);
         int maxX = MathHelper.floor_double(area.maxX + 1.0D);
