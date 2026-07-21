@@ -12,17 +12,36 @@ import thaumcraft.client.lib.RenderEventHandler;
 @Mixin(value = RenderEventHandler.class, remap = false)
 public class MixinRenderEventHandler {
 
-    // Goggles aspect tags, scan result tags, note text, wand build preview.
-    @Inject(method = "blockHighlight", at = @At("HEAD"), cancellable = true)
-    private void freecam$hideBlockHighlight(CallbackInfo ci) {
+    // Targets the draw calls rather than the per-frame renderLast/blockHighlight event methods,
+    // so no CallbackInfo is allocated unless something is actually being drawn.
+
+    // Goggles and scan aspect tags.
+    @Inject(method = "drawTagsOnContainer", at = @At("HEAD"), cancellable = true)
+    private void freecam$hideTagsOnContainer(CallbackInfo ci) {
         if (RevealGate.shouldHide()) {
             ci.cancel();
         }
     }
 
-    // Thaumometer scan pulse and golem markers.
-    @Inject(method = "renderLast", at = @At("HEAD"), cancellable = true)
-    private void freecam$hideRenderLast(CallbackInfo ci) {
+    // Goggles note text.
+    @Inject(method = "drawTextInAir", at = @At("HEAD"), cancellable = true)
+    private void freecam$hideTextInAir(CallbackInfo ci) {
+        if (RevealGate.shouldHide()) {
+            ci.cancel();
+        }
+    }
+
+    // Thaumometer scan pulse.
+    @Inject(method = "showScannedBlocks", at = @At("HEAD"), cancellable = true)
+    private void freecam$hideScannedBlocks(CallbackInfo ci) {
+        if (RevealGate.shouldHide()) {
+            ci.cancel();
+        }
+    }
+
+    // Golem placer/bell markers.
+    @Inject(method = "renderMarkedBlocks", at = @At("HEAD"), cancellable = true)
+    private void freecam$hideMarkedBlocks(CallbackInfo ci) {
         if (RevealGate.shouldHide()) {
             ci.cancel();
         }

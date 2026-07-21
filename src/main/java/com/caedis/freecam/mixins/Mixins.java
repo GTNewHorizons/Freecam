@@ -18,9 +18,6 @@ public enum Mixins implements IMixins {
             "minecraft.MixinMinecraft",
             "minecraft.MixinEntityLivingBase"
         )),
-    ANGELICA(new MixinBuilder().setPhase(Phase.EARLY)
-        .addClientMixins("angelica.MixinHandRenderer")
-        .addRequiredMod(TargetedMod.ANGELICA)),
     WAILA(new MixinBuilder().setPhase(Phase.LATE)
         .addClientMixins("waila.MixinOverlayRenderer")
         .addRequiredMod(TargetedMod.WAILA)),

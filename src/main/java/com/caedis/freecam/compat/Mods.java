@@ -8,6 +8,9 @@ public enum Mods {
 
     // spotless:off
     ANGELICA("angelica"),
+    // RenderHandEvent was added in Angelica 2.1.30
+    ANGELICA_HAND_EVENT(() -> Loader.isModLoaded("angelica")
+        && classFileExists("com/gtnewhorizons/angelica/event/RenderHandEvent.class")),
     CONTROLLING(() -> Loader.isModLoaded("controlling")
         && classFileExists("com/blamejared/controlling/keybinding/ComboKeyBinding.class")),
     EFR("etfuturum")
