@@ -20,7 +20,16 @@ public enum Mixins implements IMixins {
         )),
     ANGELICA(new MixinBuilder().setPhase(Phase.EARLY)
         .addClientMixins("angelica.MixinHandRenderer")
-        .addRequiredMod(TargetedMod.ANGELICA));
+        .addRequiredMod(TargetedMod.ANGELICA)),
+    WAILA(new MixinBuilder().setPhase(Phase.LATE)
+        .addClientMixins("waila.MixinOverlayRenderer")
+        .addRequiredMod(TargetedMod.WAILA)),
+    THAUMCRAFT(new MixinBuilder().setPhase(Phase.LATE)
+        .addClientMixins("thaumcraft.MixinRenderEventHandler")
+        .addRequiredMod(TargetedMod.THAUMCRAFT)),
+    HOLOINVENTORY(new MixinBuilder().setPhase(Phase.LATE)
+        .addClientMixins("holoinventory.MixinRenderer")
+        .addRequiredMod(TargetedMod.HOLOINVENTORY));
     // spotless:on
 
     private final MixinBuilder builder;
