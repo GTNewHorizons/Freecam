@@ -19,6 +19,17 @@ F4 + C - Toggle player/camera controls
 F4 + R - Reset all tripods  
 Mouse wheel (while in freecam) - Adjust flight speed  
 
+### Configuration
+
+All settings are in the **misc** category. Settings marked **Synced** can be overridden by a server that has the mod:
+
+| Setting | Values | Default | Synced | Description |
+|---------|--------|---------|--------|-------------|
+| `fullBright` | true/false | false | Yes | Enable full brightness while in freecam |
+| `disableSubmersionFog` | true/false | false | Yes | Disable fog when camera is submerged in water or lava |
+| `overlayVisibility` | HIDE/SHOW | HIDE | Yes | Show mod overlays (WAILA, Thaumcraft goggles/scanning, HoloInventory) while in freecam |
+| `initialPerspective` | INSIDE/FIRST_PERSON/THIRD_PERSON/THIRD_PERSON_MIRROR | INSIDE | No | Camera perspective when entering freecam |
+| `showHand` | true/false | false | No | Show the player's hand while in freecam |
 
 ### Credits:  
 Reference - https://github.com/xXseesXx/Freecam-1.7.10  

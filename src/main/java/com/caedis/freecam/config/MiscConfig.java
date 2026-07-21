@@ -16,6 +16,11 @@ public class MiscConfig {
     @Config.DefaultBoolean(false)
     public static boolean disableSubmersionFog;
 
+    @Config.Sync
+    @Config.Comment("Show overlays (WAILA, etc.) while in freecam")
+    @Config.DefaultEnum("HIDE")
+    public static OverlayVisibility overlayVisibility;
+
     @Config.Comment("Camera perspective when entering freecam")
     @Config.DefaultEnum("INSIDE")
     public static Perspective initialPerspective;
@@ -29,5 +34,10 @@ public class MiscConfig {
         FIRST_PERSON,
         THIRD_PERSON,
         THIRD_PERSON_MIRROR
+    }
+
+    public enum OverlayVisibility {
+        HIDE,
+        SHOW
     }
 }

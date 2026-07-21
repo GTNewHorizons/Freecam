@@ -9,6 +9,7 @@ import org.lwjgl.input.Keyboard;
 import com.blamejared.controlling.keybinding.ComboKeyBinding;
 import com.caedis.freecam.camera.FreecamController;
 import com.caedis.freecam.camera.tripod.TripodSlot;
+import com.caedis.freecam.compat.AngelicaCompat;
 import com.caedis.freecam.compat.Mods;
 import com.gtnewhorizons.angelica.zoom.Zoom;
 
@@ -37,6 +38,10 @@ public class ClientEventHandler {
         ClientRegistry.registerKeyBinding(toggleKey);
         ClientRegistry.registerKeyBinding(resetTripodsKey);
         ClientRegistry.registerKeyBinding(playerControlKey);
+
+        if (Mods.ANGELICA_HAND_EVENT.isLoaded()) {
+            AngelicaCompat.registerAngelicaHandListener();
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
