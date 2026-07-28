@@ -28,7 +28,7 @@ import cpw.mods.fml.relauncher.Side;
     acceptableRemoteVersions = "*")
 public class FreecamMod {
 
-    public static final String MODID = "freecam";
+    public static final String MODID = "freecam-gtnh";
     public static final String MODNAME = "Freecam";
     public static final Logger LOG = LogManager.getLogger(MODID);
 

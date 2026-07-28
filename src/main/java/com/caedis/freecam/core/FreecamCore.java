@@ -40,7 +40,7 @@ public class FreecamCore implements IFMLLoadingPlugin, IEarlyMixinLoader {
 
     @Override
     public String getMixinConfig() {
-        return "mixins.freecam.early.json";
+        return "mixins.freecam-gtnh.early.json";
     }
 
     @Override
