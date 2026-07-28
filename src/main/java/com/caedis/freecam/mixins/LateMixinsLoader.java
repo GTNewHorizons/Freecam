@@ -14,7 +14,7 @@ public class LateMixinsLoader implements ILateMixinLoader {
 
     @Override
     public String getMixinConfig() {
-        return "mixins.freecam.late.json";
+        return "mixins.freecam-gtnh.late.json";
     }
 
     @Nonnull

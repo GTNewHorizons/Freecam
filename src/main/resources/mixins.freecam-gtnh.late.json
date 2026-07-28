@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8.3-GTNH",
   "package": "com.caedis.freecam.mixins.late",
-  "refmap": "mixins.freecam.refmap.json",
+  "refmap": "mixins.freecam-gtnh.refmap.json",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
   "mixinextras": {"minVersion": "0.5.0"}
