@@ -255,7 +255,7 @@ public class FreecamController {
         }
         pendingDisable = false;
 
-        if (!active || cameraEntity == null) return;
+        if (!active || cameraEntity == null || mc.isGamePaused()) return;
 
         if (mc.thePlayer != null && mc.thePlayer.isDead) {
             disable();
