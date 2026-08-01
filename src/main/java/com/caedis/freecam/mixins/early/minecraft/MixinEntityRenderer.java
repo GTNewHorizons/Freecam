@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.caedis.freecam.camera.FreecamController;
+import com.caedis.freecam.config.FreecamSettings;
 import com.caedis.freecam.config.MiscConfig;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
@@ -44,7 +45,7 @@ public class MixinEntityRenderer {
     private Block freecam$disableSubmersionFog(World world, EntityLivingBase entity, float partialTicks) {
         Block block = ActiveRenderInfo.getBlockAtEntityViewpoint(world, entity, partialTicks);
         if (FreecamController.instance()
-            .isActive() && MiscConfig.disableSubmersionFog
+            .isActive() && FreecamSettings.disableSubmersionFog()
             && (block.getMaterial() == Material.water || block.getMaterial() == Material.lava)) {
             return Blocks.air;
         }
@@ -74,7 +75,7 @@ public class MixinEntityRenderer {
         // Apply fullbright at render time instead of mutating the persistent gammaSetting, so a
         // force-quit while in freecam cannot leave the saved gamma stuck on full bright.
         if (FreecamController.instance()
-            .isActive() && MiscConfig.fullBright) {
+            .isActive() && FreecamSettings.fullBright()) {
             return 100.0F;
         }
         return original;

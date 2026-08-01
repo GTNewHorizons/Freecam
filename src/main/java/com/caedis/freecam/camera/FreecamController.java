@@ -9,7 +9,7 @@ import org.lwjgl.input.Keyboard;
 
 import com.caedis.freecam.camera.tripod.TripodRegistry;
 import com.caedis.freecam.camera.tripod.TripodSlot;
-import com.caedis.freecam.config.GeneralConfig;
+import com.caedis.freecam.config.FreecamSettings;
 import com.caedis.freecam.config.MiscConfig;
 import com.caedis.freecam.config.MovementConfig;
 import com.gtnewhorizon.gtnhlib.util.AboveHotbarHUD;
@@ -66,6 +66,11 @@ public class FreecamController {
     }
 
     public void toggle() {
+        if (!active && FreecamSettings.disabled()) {
+            AboveHotbarHUD.renderTextAboveHotbar(StatCollector.translateToLocal("msg.freecam.denied"), 20, true, true);
+            return;
+        }
+
         if (active) {
             disable();
         } else {
@@ -80,8 +85,8 @@ public class FreecamController {
     }
 
     public void toggleTripod(TripodSlot slot) {
-        if (GeneralConfig.disabled) {
-            AboveHotbarHUD.renderTextAboveHotbar(StatCollector.translateToLocal("msg.freecam.disable"), 20, true, true);
+        if (FreecamSettings.disabled()) {
+            AboveHotbarHUD.renderTextAboveHotbar(StatCollector.translateToLocal("msg.freecam.denied"), 20, true, true);
             return;
         }
 
@@ -109,10 +114,10 @@ public class FreecamController {
     }
 
     public void enable() {
-        if (active || GeneralConfig.disabled || mc.thePlayer == null || mc.theWorld == null) return;
+        if (active || FreecamSettings.disabled() || mc.thePlayer == null || mc.theWorld == null) return;
 
         cameraEntity = new CameraEntity(mc.theWorld, mc.thePlayer);
-        cameraEntity.setCollisionMode(GeneralConfig.collisionMode);
+        cameraEntity.setCollisionMode(FreecamSettings.collisionMode());
         previousRenderViewEntity = mc.renderViewEntity;
         previousPerspective = mc.gameSettings.thirdPersonView;
         mc.gameSettings.thirdPersonView = 0;
@@ -128,10 +133,10 @@ public class FreecamController {
     }
 
     private void enableTripod(TripodSlot slot) {
-        if (active || GeneralConfig.disabled || mc.thePlayer == null || mc.theWorld == null) return;
+        if (active || FreecamSettings.disabled() || mc.thePlayer == null || mc.theWorld == null) return;
 
         cameraEntity = tripodRegistry.getOrCreate(slot);
-        cameraEntity.setCollisionMode(GeneralConfig.collisionMode);
+        cameraEntity.setCollisionMode(FreecamSettings.collisionMode());
         previousRenderViewEntity = mc.renderViewEntity;
         if (previousPerspective == -1) {
             previousPerspective = mc.gameSettings.thirdPersonView;
@@ -148,7 +153,7 @@ public class FreecamController {
 
     private void switchTripod(TripodSlot slot) {
         cameraEntity = tripodRegistry.getOrCreate(slot);
-        cameraEntity.setCollisionMode(GeneralConfig.collisionMode);
+        cameraEntity.setCollisionMode(FreecamSettings.collisionMode());
         mc.renderViewEntity = cameraEntity;
         activeSlot = slot;
         velocityX = 0;
@@ -250,7 +255,17 @@ public class FreecamController {
     }
 
     public void tick() {
-        if (pendingDisable || GeneralConfig.disabled) {
+        if (FreecamSettings.disabled()) {
+            if (active) {
+                disable();
+                AboveHotbarHUD
+                    .renderTextAboveHotbar(StatCollector.translateToLocal("msg.freecam.denied"), 20, true, true);
+            }
+            pendingDisable = false;
+            return;
+        }
+
+        if (pendingDisable) {
             disable();
         }
         pendingDisable = false;
@@ -267,7 +282,7 @@ public class FreecamController {
             return;
         }
 
-        cameraEntity.setCollisionMode(GeneralConfig.collisionMode);
+        cameraEntity.setCollisionMode(FreecamSettings.collisionMode());
         cameraEntity.onUpdate();
 
         if (playerControlled) return;

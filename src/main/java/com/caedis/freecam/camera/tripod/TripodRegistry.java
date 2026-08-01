@@ -5,7 +5,7 @@ import java.util.EnumMap;
 import net.minecraft.client.Minecraft;
 
 import com.caedis.freecam.camera.CameraEntity;
-import com.caedis.freecam.config.GeneralConfig;
+import com.caedis.freecam.config.FreecamSettings;
 
 public class TripodRegistry {
 
@@ -16,7 +16,7 @@ public class TripodRegistry {
         if (camera == null) {
             Minecraft mc = Minecraft.getMinecraft();
             camera = new CameraEntity(mc.theWorld, mc.thePlayer);
-            camera.setCollisionMode(GeneralConfig.collisionMode);
+            camera.setCollisionMode(FreecamSettings.collisionMode());
             cameras.put(slot, camera);
         }
         return camera;
