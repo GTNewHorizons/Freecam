@@ -5,8 +5,6 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.StatCollector;
 
-import org.lwjgl.input.Keyboard;
-
 import com.caedis.freecam.camera.tripod.TripodRegistry;
 import com.caedis.freecam.camera.tripod.TripodSlot;
 import com.caedis.freecam.config.GeneralConfig;
@@ -32,11 +30,11 @@ public class FreecamController {
     private TripodSlot activeSlot = TripodSlot.NONE;
     private boolean pendingDisable;
     private int previousPerspective = -1;
-    private float speedMultiplier = 1.0F;
+    private float speedMultiplier = 2.0F;
 
     private static final float SPEED_SCROLL_STEP = 0.1F;
     private static final float SPEED_MULTIPLIER_MIN = 0.1F;
-    private static final float SPEED_MULTIPLIER_MAX = 10.0F;
+    private static final float SPEED_MULTIPLIER_MAX = 20.0F;
 
     private double velocityX;
     private double velocityY;
@@ -235,10 +233,15 @@ public class FreecamController {
     }
 
     public void adjustSpeed(int scrollDelta) {
+        float step = SPEED_SCROLL_STEP;
+        if (GameSettings.isKeyDown(mc.gameSettings.keyBindSprint)) {
+            step *= 10.0F;
+        }
+
         if (scrollDelta > 0) {
-            speedMultiplier = Math.min(SPEED_MULTIPLIER_MAX, speedMultiplier + SPEED_SCROLL_STEP);
+            speedMultiplier = Math.min(SPEED_MULTIPLIER_MAX, speedMultiplier + step);
         } else if (scrollDelta < 0) {
-            speedMultiplier = Math.max(SPEED_MULTIPLIER_MIN, speedMultiplier - SPEED_SCROLL_STEP);
+            speedMultiplier = Math.max(SPEED_MULTIPLIER_MIN, speedMultiplier - step);
         }
         speedMultiplier = Math.round(speedMultiplier * 10.0F) / 10.0F;
 
@@ -273,13 +276,13 @@ public class FreecamController {
         if (playerControlled) return;
 
         GameSettings gs = mc.gameSettings;
-        boolean forward = Keyboard.isKeyDown(gs.keyBindForward.getKeyCode());
-        boolean back = Keyboard.isKeyDown(gs.keyBindBack.getKeyCode());
-        boolean left = Keyboard.isKeyDown(gs.keyBindLeft.getKeyCode());
-        boolean right = Keyboard.isKeyDown(gs.keyBindRight.getKeyCode());
-        boolean up = Keyboard.isKeyDown(gs.keyBindJump.getKeyCode());
-        boolean down = Keyboard.isKeyDown(gs.keyBindSneak.getKeyCode());
-        boolean sprint = Keyboard.isKeyDown(gs.keyBindSprint.getKeyCode());
+        boolean forward = GameSettings.isKeyDown(gs.keyBindForward);
+        boolean back = GameSettings.isKeyDown(gs.keyBindBack);
+        boolean left = GameSettings.isKeyDown(gs.keyBindLeft);
+        boolean right = GameSettings.isKeyDown(gs.keyBindRight);
+        boolean up = GameSettings.isKeyDown(gs.keyBindJump);
+        boolean down = GameSettings.isKeyDown(gs.keyBindSneak);
+        boolean sprint = GameSettings.isKeyDown(gs.keyBindSprint);
 
         double speed = MovementConfig.speed * speedMultiplier;
         if (sprint) {
