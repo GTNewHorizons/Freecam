@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.caedis.freecam.camera.FreecamController;
 import com.caedis.freecam.config.GeneralConfig;
+import com.caedis.freecam.config.MovementConfig;
 
 @Mixin(EntityLivingBase.class)
 public abstract class MixinEntityLivingBase {
@@ -26,6 +27,14 @@ public abstract class MixinEntityLivingBase {
                 FreecamController.instance()
                     .scheduleDisable();
             }
+        }
+    }
+
+    @Inject(method = "moveEntityWithHeading", at = @At("HEAD"), cancellable = true)
+    private void freecam$cancelMovement(float strafe, float forward, CallbackInfo ci) {
+        if (MovementConfig.lockPlayerBody && FreecamController.instance()
+            .isActive() && this.equals(Minecraft.getMinecraft().thePlayer)) {
+            ci.cancel();
         }
     }
 }

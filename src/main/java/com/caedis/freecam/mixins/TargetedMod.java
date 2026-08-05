@@ -9,7 +9,11 @@ public enum TargetedMod implements ITargetMod {
 
     WAILA(null, "Waila"),
     THAUMCRAFT(null, "Thaumcraft"),
-    HOLOINVENTORY(null, "holoinventory");
+    HOLOINVENTORY(null, "holoinventory"),
+    IC2("ic2.core.IC2", "IC2"),
+    GALAXYSPACE("galaxyspace.core.GSCore", "GalaxySpace"),
+    GREGTECH("gregtech.GT_Mod", "gregtech"),
+    PROJECTRED("mrtjp.projectred.ProjectRedExpansion", "ProjRed|Expansion");
 
     private final TargetModBuilder builder;
 
