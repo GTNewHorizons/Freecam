@@ -4,6 +4,18 @@
   "package": "com.caedis.freecam.mixins.late",
   "refmap": "mixins.freecam-gtnh.refmap.json",
   "target": "@env(DEFAULT)",
+  "client": [
+    "galaxyspace.MixinGalaxySpaceKeyHandler$MixinItemJetPack",
+    "galaxyspace.MixinGalaxySpaceKeyHandler$MixinItemSpacesuitJetPlate",
+    "galaxyspace.MixinGalaxySpaceParticles$MixinEntityJetpackFlameFX",
+    "galaxyspace.MixinGalaxySpaceParticles$MixinEntityJetpackSmokeFX",
+    "gregtech.MixinGregTechJetpack",
+    "holoinventory.MixinRenderer",
+    "ic2.MixinIC2Keyboard",
+    "projectred.MixinProjectRedJetpack",
+    "thaumcraft.MixinRenderEventHandler",
+    "waila.MixinOverlayRenderer"
+  ],
   "compatibilityLevel": "JAVA_8",
   "mixinextras": {"minVersion": "0.5.0"}
 }

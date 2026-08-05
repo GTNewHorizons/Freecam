@@ -15,6 +15,10 @@ public class MovementConfig {
     @Config.DefaultEnum("CREATIVE")
     public static MovementMode movementMode;
 
+    @Config.Comment("Lock the player's body in place while in freecam (prevents movement from external forces)")
+    @Config.DefaultBoolean(false)
+    public static boolean lockPlayerBody;
+
     public enum MovementMode {
         CREATIVE,
         STATIC
