@@ -8,9 +8,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.caedis.freecam.camera.FreecamController;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 import galaxyspace.core.item.armor.ItemJetPack;
 import galaxyspace.core.item.armor.ItemSpacesuitJetPlate;
@@ -27,12 +27,13 @@ public class MixinGalaxySpaceKeyHandler {
     @Mixin(value = ItemJetPack.class, remap = false)
     public static abstract class MixinItemJetPack {
 
-        @Inject(method = "useJetpack", at = @At("HEAD"), cancellable = true, remap = false)
-        private void disableJetpackInFreecam(EntityPlayer player, CallbackInfoReturnable<Boolean> cir) {
+        @ModifyReturnValue(method = "useJetpack", at = @At("RETURN"), remap = false)
+        private boolean disableJetpackInFreecam(boolean original, EntityPlayer player) {
             FreecamController controller = FreecamController.instance();
             if (controller.isActive() && !controller.isPlayerControlled()) {
-                cir.setReturnValue(false);
+                return false;
             }
+            return original;
         }
 
         @Inject(method = "onArmorTick", at = @At("HEAD"), cancellable = true, remap = false)
@@ -61,12 +62,13 @@ public class MixinGalaxySpaceKeyHandler {
     @Mixin(value = ItemSpacesuitJetPlate.class, remap = false)
     public static abstract class MixinItemSpacesuitJetPlate {
 
-        @Inject(method = "useJetpack", at = @At("HEAD"), cancellable = true, remap = false)
-        private void disableJetpackInFreecam(EntityPlayer player, CallbackInfoReturnable<Boolean> cir) {
+        @ModifyReturnValue(method = "useJetpack", at = @At("RETURN"), remap = false)
+        private boolean disableJetpackInFreecam(boolean original, EntityPlayer player) {
             FreecamController controller = FreecamController.instance();
             if (controller.isActive() && !controller.isPlayerControlled()) {
-                cir.setReturnValue(false);
+                return false;
             }
+            return original;
         }
 
         @Inject(method = "onArmorTick", at = @At("HEAD"), cancellable = true, remap = false)

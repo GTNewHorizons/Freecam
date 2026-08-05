@@ -18,8 +18,8 @@ import galaxyspace.core.particle.EntityJetpackSmokeFX;
 import micdoodle8.mods.galacticraft.api.vector.Vector3;
 
 /**
- * Mixin to prevent GalaxySpace jetpack particles from spawning/updating during freecam. Note: GalaxySpace 1.1.139+
- * uses Vector3 constructor instead of individual doubles.
+ * Mixin to prevent GalaxySpace jetpack particles from spawning during freecam. Particles are marked dead immediately
+ * in the constructor to avoid per-frame allocation overhead from onUpdate hooks.
  */
 public class MixinGalaxySpaceParticles {
 
@@ -48,20 +48,10 @@ public class MixinGalaxySpaceParticles {
         private void onConstructor(World world, Vector3 position, Vector3 motion, CallbackInfo ci) {
             FreecamController controller = FreecamController.instance();
             // Mark particle for immediate death if freecam is active and player's entity is at this position
+            // This prevents the particle from ever updating, avoiding per-frame allocation overhead
             if (controller.isActive() && !controller.isPlayerControlled()
                 && freecam_gtnh$isNearPlayer(position.x, position.y, position.z)) {
                 this.setDead();
-            }
-        }
-
-        @Inject(method = "onUpdate", at = @At("HEAD"), cancellable = true, remap = false)
-        private void cancelUpdateInFreecam(CallbackInfo ci) {
-            FreecamController controller = FreecamController.instance();
-            if (controller.isActive() && !controller.isPlayerControlled()) {
-                if (freecam_gtnh$isNearPlayer(this.posX, this.posY, this.posZ)) {
-                    this.setDead();
-                    ci.cancel();
-                }
             }
         }
     }
@@ -91,20 +81,10 @@ public class MixinGalaxySpaceParticles {
         private void onConstructor(World world, Vector3 position, Vector3 motion, CallbackInfo ci) {
             FreecamController controller = FreecamController.instance();
             // Mark particle for immediate death if freecam is active and player's entity is at this position
+            // This prevents the particle from ever updating, avoiding per-frame allocation overhead
             if (controller.isActive() && !controller.isPlayerControlled()
                 && freecam_gtnh$isNearPlayer(position.x, position.y, position.z)) {
                 this.setDead();
-            }
-        }
-
-        @Inject(method = "onUpdate", at = @At("HEAD"), cancellable = true, remap = false)
-        private void cancelUpdateInFreecam(CallbackInfo ci) {
-            FreecamController controller = FreecamController.instance();
-            if (controller.isActive() && !controller.isPlayerControlled()) {
-                if (freecam_gtnh$isNearPlayer(this.posX, this.posY, this.posZ)) {
-                    this.setDead();
-                    ci.cancel();
-                }
             }
         }
     }
