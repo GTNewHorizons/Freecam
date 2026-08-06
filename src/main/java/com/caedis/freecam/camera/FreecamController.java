@@ -10,6 +10,7 @@ import org.lwjgl.input.Keyboard;
 import com.caedis.freecam.camera.tripod.TripodRegistry;
 import com.caedis.freecam.camera.tripod.TripodSlot;
 import com.caedis.freecam.config.FreecamSettings;
+import com.caedis.freecam.config.GeneralConfig;
 import com.caedis.freecam.config.MiscConfig;
 import com.caedis.freecam.config.MovementConfig;
 import com.gtnewhorizon.gtnhlib.util.AboveHotbarHUD;
@@ -117,7 +118,7 @@ public class FreecamController {
         if (active || FreecamSettings.disabled() || mc.thePlayer == null || mc.theWorld == null) return;
 
         cameraEntity = new CameraEntity(mc.theWorld, mc.thePlayer);
-        cameraEntity.setCollisionMode(FreecamSettings.collisionMode());
+        cameraEntity.setCollisionMode(GeneralConfig.collisionMode);
         previousRenderViewEntity = mc.renderViewEntity;
         previousPerspective = mc.gameSettings.thirdPersonView;
         mc.gameSettings.thirdPersonView = 0;
@@ -136,7 +137,7 @@ public class FreecamController {
         if (active || FreecamSettings.disabled() || mc.thePlayer == null || mc.theWorld == null) return;
 
         cameraEntity = tripodRegistry.getOrCreate(slot);
-        cameraEntity.setCollisionMode(FreecamSettings.collisionMode());
+        cameraEntity.setCollisionMode(GeneralConfig.collisionMode);
         previousRenderViewEntity = mc.renderViewEntity;
         if (previousPerspective == -1) {
             previousPerspective = mc.gameSettings.thirdPersonView;
@@ -153,7 +154,7 @@ public class FreecamController {
 
     private void switchTripod(TripodSlot slot) {
         cameraEntity = tripodRegistry.getOrCreate(slot);
-        cameraEntity.setCollisionMode(FreecamSettings.collisionMode());
+        cameraEntity.setCollisionMode(GeneralConfig.collisionMode);
         mc.renderViewEntity = cameraEntity;
         activeSlot = slot;
         velocityX = 0;
@@ -282,7 +283,7 @@ public class FreecamController {
             return;
         }
 
-        cameraEntity.setCollisionMode(FreecamSettings.collisionMode());
+        cameraEntity.setCollisionMode(GeneralConfig.collisionMode);
         cameraEntity.onUpdate();
 
         if (playerControlled) return;

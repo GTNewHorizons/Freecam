@@ -11,7 +11,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 
 import com.caedis.freecam.network.FreecamNetwork;
-import com.caedis.freecam.network.FreecamPermissionState;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
@@ -25,7 +24,7 @@ public class FreecamPermissionSync {
     // Rank commands fire no event, so poll for changes
     private static final int POLL_INTERVAL_TICKS = 100;
 
-    private final Map<UUID, FreecamPermissionState> lastSent = new HashMap<>();
+    private final Map<UUID, Boolean> lastSent = new HashMap<>();
     private int tickCounter;
 
     @SubscribeEvent
@@ -63,19 +62,19 @@ public class FreecamPermissionSync {
     private void send(EntityPlayerMP player) {
         // Ranks disabled: stay on the pure config path, no packet at all
         if (!Ranks.isActive()) return;
-        FreecamPermissionState state = FreecamPermissions.resolve(player);
         // lastSent is not set here, so a lost login packet gets re-sent by the first poll
-        FreecamNetwork.send(state, player);
+        FreecamNetwork.send(FreecamPermissions.isAllowed(player), player);
     }
 
     private void sendIfChanged(EntityPlayerMP player) {
         if (!Ranks.isActive()) return;
-        FreecamPermissionState state = FreecamPermissions.resolve(player);
+        boolean allowed = FreecamPermissions.isAllowed(player);
         UUID id = player.getGameProfile()
             .getId();
-        if (state.equals(lastSent.get(id))) return;
-        lastSent.put(id, state);
-        FreecamNetwork.send(state, player);
+        Boolean last = lastSent.get(id);
+        if (last != null && last == allowed) return;
+        lastSent.put(id, allowed);
+        FreecamNetwork.send(allowed, player);
     }
 
     @SuppressWarnings("unchecked")

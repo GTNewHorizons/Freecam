@@ -8,10 +8,10 @@ dependencies {
     compileOnly("ganymedes01.etfuturum:Et-Futurum-Requiem:2.6.2.28-GTNH:dev") { transitive = false }
     compileOnly("com.github.GTNewHorizons:Controlling:2.1.7:dev") { transitive = false }
     compileOnly("thaumcraft:Thaumcraft:1.7.10-4.2.3.5:dev") { transitive = false }
-    compileOnly("com.github.GTNewHorizons:HoloInventory:2.5.15-GTNH:dev")
+    compileOnly("com.github.GTNewHorizons:HoloInventory:2.5.15-GTNH:dev") { transitive = false }
     compileOnly("com.github.GTNewHorizons:ServerUtilities:2.4.5:dev") { transitive = false }
+    compileOnly("com.github.GTNewHorizons:waila:1.19.31:dev") { transitive = false }
 
-    devOnlyNonPublishable("com.github.GTNewHorizons:waila:1.19.31:dev")
 
     runtimeOnlyNonPublishable("curse.maven:archaicfix-677782:6785842")
 }

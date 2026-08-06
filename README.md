@@ -40,13 +40,12 @@ system turned off, nothing changes: the config file values apply to everyone.
 | Node | Type | Default | Description |
 |------|------|---------|-------------|
 | `freecam.use` | permission | `ALL`, or `NONE` when `disabled` is true in the config (nobody until a rank grants it) | Allows the player to use freecam |
-| `freecam.collision_mode` | rank config | server config `collisionMode` | Camera collision mode for this rank |
-| `freecam.full_bright` | rank config | server config `fullBright` | Full brightness while in freecam |
-| `freecam.disable_submersion_fog` | rank config | server config `disableSubmersionFog` | Disable submersion fog while in freecam |
-| `freecam.overlay_visibility` | rank config | server config `overlayVisibility` | Show or hide mod overlays while in freecam |
 
-Rank values fully override the synced config values, including `disabled`; the config file only supplies the
-defaults used by ranks that do not set a value. Changes apply within about five seconds, no relog needed.
+Ranks control access only. Everything else (`collisionMode`, `fullBright`, `disableSubmersionFog`,
+`overlayVisibility`) stays server-wide and comes from the server's config as before. A rank granting
+`freecam.use` overrides `disabled`, and revoking it takes freecam away even when `disabled` is false; the
+config value only decides the node's default for ranks that say nothing. Changes apply within about five
+seconds, no relog needed.
 
 ### Credits:  
 Reference - https://github.com/xXseesXx/Freecam-1.7.10  

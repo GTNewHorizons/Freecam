@@ -2,23 +2,23 @@ package com.caedis.freecam.network;
 
 import javax.annotation.Nullable;
 
-/** Last permission state received from the server. Null means no override. */
+/** Whether the server allows this player to use freecam. Null means no override. */
 public final class ServerPermission {
 
-    private static volatile FreecamPermissionState state;
+    private static volatile Boolean allowed;
 
     private ServerPermission() {}
 
     @Nullable
-    public static FreecamPermissionState state() {
-        return state;
+    public static Boolean allowed() {
+        return allowed;
     }
 
-    public static void set(FreecamPermissionState newState) {
-        state = newState;
+    public static void set(boolean newAllowed) {
+        allowed = newAllowed;
     }
 
     public static void clear() {
-        state = null;
+        allowed = null;
     }
 }

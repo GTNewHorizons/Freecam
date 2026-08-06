@@ -18,7 +18,7 @@ public final class FreecamNetwork {
         CHANNEL.registerMessage(PacketFreecamPermission.Handler.class, PacketFreecamPermission.class, 0, Side.CLIENT);
     }
 
-    public static void send(FreecamPermissionState state, EntityPlayerMP player) {
-        CHANNEL.sendTo(new PacketFreecamPermission(state), player);
+    public static void send(boolean allowed, EntityPlayerMP player) {
+        CHANNEL.sendTo(new PacketFreecamPermission(allowed), player);
     }
 }
