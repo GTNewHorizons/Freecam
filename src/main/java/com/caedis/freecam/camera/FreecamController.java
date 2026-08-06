@@ -289,13 +289,13 @@ public class FreecamController {
         if (playerControlled) return;
 
         GameSettings gs = mc.gameSettings;
-        boolean forward = Keyboard.isKeyDown(gs.keyBindForward.getKeyCode());
-        boolean back = Keyboard.isKeyDown(gs.keyBindBack.getKeyCode());
-        boolean left = Keyboard.isKeyDown(gs.keyBindLeft.getKeyCode());
-        boolean right = Keyboard.isKeyDown(gs.keyBindRight.getKeyCode());
-        boolean up = Keyboard.isKeyDown(gs.keyBindJump.getKeyCode());
-        boolean down = Keyboard.isKeyDown(gs.keyBindSneak.getKeyCode());
-        boolean sprint = Keyboard.isKeyDown(gs.keyBindSprint.getKeyCode());
+        boolean forward = GameSettings.isKeyDown(gs.keyBindForward);
+        boolean back = GameSettings.isKeyDown(gs.keyBindBack);
+        boolean left = GameSettings.isKeyDown(gs.keyBindLeft);
+        boolean right = GameSettings.isKeyDown(gs.keyBindRight);
+        boolean up = GameSettings.isKeyDown(gs.keyBindJump);
+        boolean down = GameSettings.isKeyDown(gs.keyBindSneak);
+        boolean sprint = GameSettings.isKeyDown(gs.keyBindSprint);
 
         double speed = MovementConfig.speed * speedMultiplier;
         if (sprint) {
