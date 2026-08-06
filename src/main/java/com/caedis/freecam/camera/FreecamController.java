@@ -5,10 +5,9 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.StatCollector;
 
-import org.lwjgl.input.Keyboard;
-
 import com.caedis.freecam.camera.tripod.TripodRegistry;
 import com.caedis.freecam.camera.tripod.TripodSlot;
+import com.caedis.freecam.config.FreecamSettings;
 import com.caedis.freecam.config.GeneralConfig;
 import com.caedis.freecam.config.MiscConfig;
 import com.caedis.freecam.config.MovementConfig;
@@ -66,6 +65,11 @@ public class FreecamController {
     }
 
     public void toggle() {
+        if (!active && FreecamSettings.disabled()) {
+            AboveHotbarHUD.renderTextAboveHotbar(StatCollector.translateToLocal("msg.freecam.denied"), 20, true, true);
+            return;
+        }
+
         if (active) {
             disable();
         } else {
@@ -80,8 +84,8 @@ public class FreecamController {
     }
 
     public void toggleTripod(TripodSlot slot) {
-        if (GeneralConfig.disabled) {
-            AboveHotbarHUD.renderTextAboveHotbar(StatCollector.translateToLocal("msg.freecam.disable"), 20, true, true);
+        if (FreecamSettings.disabled()) {
+            AboveHotbarHUD.renderTextAboveHotbar(StatCollector.translateToLocal("msg.freecam.denied"), 20, true, true);
             return;
         }
 
@@ -109,7 +113,7 @@ public class FreecamController {
     }
 
     public void enable() {
-        if (active || GeneralConfig.disabled || mc.thePlayer == null || mc.theWorld == null) return;
+        if (active || FreecamSettings.disabled() || mc.thePlayer == null || mc.theWorld == null) return;
 
         cameraEntity = new CameraEntity(mc.theWorld, mc.thePlayer);
         cameraEntity.setCollisionMode(GeneralConfig.collisionMode);
@@ -125,10 +129,12 @@ public class FreecamController {
         velocityZ = 0;
 
         applyPerspectiveOffset();
+        // Collapse prev onto the offset position so the first frame does not lerp from the player.
+        cameraEntity.onUpdate();
     }
 
     private void enableTripod(TripodSlot slot) {
-        if (active || GeneralConfig.disabled || mc.thePlayer == null || mc.theWorld == null) return;
+        if (active || FreecamSettings.disabled() || mc.thePlayer == null || mc.theWorld == null) return;
 
         cameraEntity = tripodRegistry.getOrCreate(slot);
         cameraEntity.setCollisionMode(GeneralConfig.collisionMode);
@@ -250,12 +256,22 @@ public class FreecamController {
     }
 
     public void tick() {
-        if (pendingDisable || GeneralConfig.disabled) {
+        if (FreecamSettings.disabled()) {
+            if (active) {
+                disable();
+                AboveHotbarHUD
+                    .renderTextAboveHotbar(StatCollector.translateToLocal("msg.freecam.denied"), 20, true, true);
+            }
+            pendingDisable = false;
+            return;
+        }
+
+        if (pendingDisable) {
             disable();
         }
         pendingDisable = false;
 
-        if (!active || cameraEntity == null || mc.isGamePaused()) return;
+        if (!active || cameraEntity == null) return;
 
         if (mc.thePlayer != null && mc.thePlayer.isDead) {
             disable();
@@ -267,19 +283,28 @@ public class FreecamController {
             return;
         }
 
+        // Input is blocked, but prev/last positions must still be synced.
+        if (mc.isGamePaused() || mc.currentScreen != null) {
+            cameraEntity.onUpdate();
+            velocityX = 0;
+            velocityY = 0;
+            velocityZ = 0;
+            return;
+        }
+
         cameraEntity.setCollisionMode(GeneralConfig.collisionMode);
         cameraEntity.onUpdate();
 
         if (playerControlled) return;
 
         GameSettings gs = mc.gameSettings;
-        boolean forward = Keyboard.isKeyDown(gs.keyBindForward.getKeyCode());
-        boolean back = Keyboard.isKeyDown(gs.keyBindBack.getKeyCode());
-        boolean left = Keyboard.isKeyDown(gs.keyBindLeft.getKeyCode());
-        boolean right = Keyboard.isKeyDown(gs.keyBindRight.getKeyCode());
-        boolean up = Keyboard.isKeyDown(gs.keyBindJump.getKeyCode());
-        boolean down = Keyboard.isKeyDown(gs.keyBindSneak.getKeyCode());
-        boolean sprint = Keyboard.isKeyDown(gs.keyBindSprint.getKeyCode());
+        boolean forward = GameSettings.isKeyDown(gs.keyBindForward);
+        boolean back = GameSettings.isKeyDown(gs.keyBindBack);
+        boolean left = GameSettings.isKeyDown(gs.keyBindLeft);
+        boolean right = GameSettings.isKeyDown(gs.keyBindRight);
+        boolean up = GameSettings.isKeyDown(gs.keyBindJump);
+        boolean down = GameSettings.isKeyDown(gs.keyBindSneak);
+        boolean sprint = GameSettings.isKeyDown(gs.keyBindSprint);
 
         double speed = MovementConfig.speed * speedMultiplier;
         if (sprint) {

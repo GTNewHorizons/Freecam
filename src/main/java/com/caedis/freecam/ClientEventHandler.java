@@ -11,6 +11,7 @@ import com.caedis.freecam.camera.FreecamController;
 import com.caedis.freecam.camera.tripod.TripodSlot;
 import com.caedis.freecam.compat.AngelicaCompat;
 import com.caedis.freecam.compat.Mods;
+import com.caedis.freecam.network.ServerPermission;
 import com.gtnewhorizons.angelica.zoom.Zoom;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
@@ -168,6 +169,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void onClientConnected(FMLNetworkEvent.ClientConnectedToServerEvent event) {
+        ServerPermission.clear();
         FreecamController.reset();
     }
 
@@ -176,5 +178,6 @@ public class ClientEventHandler {
         FreecamController.instance()
             .onDisconnect();
         FreecamController.reset();
+        ServerPermission.clear();
     }
 }

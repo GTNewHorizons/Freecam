@@ -9,7 +9,7 @@ Tripod system - Saved camera positions by holding the toggle key and pressing a 
 4 collision modes: Full, Ignore Transparent (non-opaque blocks including openables), Ignore Openables (doors, trapdoors, etc) and None (noclip)  
 Config options for fullbright, fog removal, hand rendering, and initial perspective  
 Camera is clamped to a sphere inside the player's render distance
-Server owners can include the mod to force the collision mode or to disable the mod entirely for players  
+Server owners can include the mod to force the collision mode, to disable the mod entirely, or to grant freecam per ServerUtilities rank  
 The server must have the mod if the client has the mod. Mod is optional if server has the mod
 
 Default Controls (all but the numbers are configurable):  
@@ -30,6 +30,22 @@ All settings are in the **misc** category. Settings marked **Synced** can be ove
 | `overlayVisibility` | HIDE/SHOW | HIDE | Yes | Show mod overlays (WAILA, Thaumcraft goggles/scanning, HoloInventory) while in freecam |
 | `initialPerspective` | INSIDE/FIRST_PERSON/THIRD_PERSON/THIRD_PERSON_MIRROR | INSIDE | No | Camera perspective when entering freecam |
 | `showHand` | true/false | false | No | Show the player's hand while in freecam |
+
+### ServerUtilities ranks (optional)
+
+If [ServerUtilities](https://github.com/GTNewHorizons/ServerUtilities) is installed on the server, freecam
+access and settings can be granted per rank instead of server-wide. Without ServerUtilities, or with its rank
+system turned off, nothing changes: the config file values apply to everyone.
+
+| Node | Type | Default | Description |
+|------|------|---------|-------------|
+| `freecam.use` | permission | `ALL`, or `NONE` when `disabled` is true in the config (nobody until a rank grants it) | Allows the player to use freecam |
+
+Ranks control access only. Everything else (`collisionMode`, `fullBright`, `disableSubmersionFog`,
+`overlayVisibility`) stays server-wide and comes from the server's config as before. A rank granting
+`freecam.use` overrides `disabled`, and revoking it takes freecam away even when `disabled` is false; the
+config value only decides the node's default for ranks that say nothing. Changes apply within about five
+seconds, no relog needed.
 
 ### Credits:  
 Reference - https://github.com/xXseesXx/Freecam-1.7.10  
