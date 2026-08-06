@@ -5,8 +5,6 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.StatCollector;
 
-import org.lwjgl.input.Keyboard;
-
 import com.caedis.freecam.camera.tripod.TripodRegistry;
 import com.caedis.freecam.camera.tripod.TripodSlot;
 import com.caedis.freecam.config.FreecamSettings;
