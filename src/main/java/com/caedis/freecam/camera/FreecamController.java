@@ -129,6 +129,8 @@ public class FreecamController {
         velocityZ = 0;
 
         applyPerspectiveOffset();
+        // Collapse prev onto the offset position so the first frame does not lerp from the player.
+        cameraEntity.onUpdate();
     }
 
     private void enableTripod(TripodSlot slot) {
@@ -269,7 +271,7 @@ public class FreecamController {
         }
         pendingDisable = false;
 
-        if (!active || cameraEntity == null || mc.isGamePaused()) return;
+        if (!active || cameraEntity == null) return;
 
         if (mc.thePlayer != null && mc.thePlayer.isDead) {
             disable();
@@ -278,6 +280,15 @@ public class FreecamController {
 
         if (cameraEntity.worldObj != mc.theWorld) {
             disable();
+            return;
+        }
+
+        // Input is blocked, but prev/last positions must still be synced.
+        if (mc.isGamePaused() || mc.currentScreen != null) {
+            cameraEntity.onUpdate();
+            velocityX = 0;
+            velocityY = 0;
+            velocityZ = 0;
             return;
         }
 
