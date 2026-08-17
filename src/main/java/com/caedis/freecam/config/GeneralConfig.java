@@ -18,8 +18,9 @@ public class GeneralConfig {
 
     @Config.Sync
     @Config.Comment("[Server Controlled] Maximum distance the camera can travel from the player. Set to 0 to use render distance.")
-    @Config.DefaultDouble(0.0)
-    public static double maxDistance;
+    @Config.DefaultInt(0)
+    @Config.RangeInt(min = 0)
+    public static int maxDistance;
 
     @Config.Comment("Disable freecam when the player takes damage")
     @Config.DefaultBoolean(true)

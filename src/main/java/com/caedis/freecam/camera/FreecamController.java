@@ -303,7 +303,7 @@ public class FreecamController {
         if (maxDist < 0) maxDist = 0;
 
         // Clamp to max distance
-        if (GeneralConfig.maxDistance > 0.0) {
+        if (GeneralConfig.maxDistance > 0) {
             maxDist = Math.min(maxDist, GeneralConfig.maxDistance);
         }
 
