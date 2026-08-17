@@ -16,6 +16,11 @@ public class GeneralConfig {
     @Config.DefaultEnum("FULL")
     public static CollisionMode collisionMode;
 
+    @Config.Sync
+    @Config.Comment("[Server Controlled] Maximum distance the camera can travel from the player. Set to 0 to use render distance.")
+    @Config.DefaultDouble(0.0)
+    public static double maxDistance;
+
     @Config.Comment("Disable freecam when the player takes damage")
     @Config.DefaultBoolean(true)
     public static boolean disableOnDamage;

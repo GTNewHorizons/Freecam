@@ -302,6 +302,11 @@ public class FreecamController {
         double maxDist = (mc.gameSettings.renderDistanceChunks - CLAMP_MARGIN_CHUNKS) * 16.0;
         if (maxDist < 0) maxDist = 0;
 
+        // Clamp to max distance
+        if (GeneralConfig.maxDistance > 0.0) {
+            maxDist = Math.min(maxDist, GeneralConfig.maxDistance);
+        }
+
         double dx = cameraEntity.posX - mc.thePlayer.posX;
         double dy = cameraEntity.posY - mc.thePlayer.posY;
         double dz = cameraEntity.posZ - mc.thePlayer.posZ;
