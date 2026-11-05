@@ -272,6 +272,13 @@ public class FreecamController {
 
         if (playerControlled) return;
 
+        if (mc.currentScreen != null) {
+            velocityX = 0;
+            velocityY = 0;
+            velocityZ = 0;
+            return;
+        }
+
         GameSettings gs = mc.gameSettings;
         boolean forward = Keyboard.isKeyDown(gs.keyBindForward.getKeyCode());
         boolean back = Keyboard.isKeyDown(gs.keyBindBack.getKeyCode());
