@@ -1,6 +1,7 @@
 package com.caedis.freecam.camera;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.StatCollector;
@@ -159,7 +160,10 @@ public class FreecamController {
     public void disable() {
         if (!active) return;
 
-        mc.renderViewEntity = previousRenderViewEntity;
+        // Respawns and dimension changes can replace the player saved when freecam was enabled.
+        mc.renderViewEntity = previousRenderViewEntity == null
+            || previousRenderViewEntity instanceof EntityClientPlayerMP
+            || previousRenderViewEntity.worldObj != mc.theWorld ? mc.thePlayer : previousRenderViewEntity;
         mc.gameSettings.thirdPersonView = previousPerspective;
         previousPerspective = -1;
         previousRenderViewEntity = null;
