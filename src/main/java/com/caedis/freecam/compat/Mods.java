@@ -13,7 +13,8 @@ public enum Mods {
         && classFileExists("com/gtnewhorizons/angelica/event/RenderHandEvent.class")),
     CONTROLLING(() -> Loader.isModLoaded("controlling")
         && classFileExists("com/blamejared/controlling/keybinding/ComboKeyBinding.class")),
-    EFR("etfuturum")
+    EFR("etfuturum"),
+    SERVER_UTILITIES("serverutilities")
     ;
     // spotless:on
 

@@ -7,9 +7,12 @@ import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.caedis.freecam.compat.Mods;
+import com.caedis.freecam.compat.serverutilities.ServerUtilitiesCompat;
 import com.caedis.freecam.config.GeneralConfig;
 import com.caedis.freecam.config.MiscConfig;
 import com.caedis.freecam.config.MovementConfig;
+import com.caedis.freecam.network.FreecamNetwork;
 import com.gtnewhorizon.gtnhlib.config.ConfigException;
 import com.gtnewhorizon.gtnhlib.config.ConfigurationManager;
 
@@ -41,6 +44,12 @@ public class FreecamMod {
         } catch (ConfigException e) {
             LOG.error("Failed to register config", e);
         }
+
+        FreecamNetwork.init();
+
+        if (Mods.SERVER_UTILITIES.isLoaded()) {
+            ServerUtilitiesCompat.preInit();
+        }
     }
 
     @NetworkCheckHandler
@@ -63,6 +72,10 @@ public class FreecamMod {
                 .register(handler);
             MinecraftForge.EVENT_BUS.register(handler);
 
+        }
+
+        if (Mods.SERVER_UTILITIES.isLoaded()) {
+            ServerUtilitiesCompat.init();
         }
     }
 }

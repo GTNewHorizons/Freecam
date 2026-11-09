@@ -7,6 +7,7 @@ import net.minecraft.util.StatCollector;
 
 import com.caedis.freecam.camera.tripod.TripodRegistry;
 import com.caedis.freecam.camera.tripod.TripodSlot;
+import com.caedis.freecam.config.FreecamSettings;
 import com.caedis.freecam.config.GeneralConfig;
 import com.caedis.freecam.config.MiscConfig;
 import com.caedis.freecam.config.MovementConfig;
@@ -64,6 +65,11 @@ public class FreecamController {
     }
 
     public void toggle() {
+        if (!active && FreecamSettings.disabled()) {
+            AboveHotbarHUD.renderTextAboveHotbar(StatCollector.translateToLocal("msg.freecam.denied"), 20, true, true);
+            return;
+        }
+
         if (active) {
             disable();
         } else {
@@ -78,8 +84,8 @@ public class FreecamController {
     }
 
     public void toggleTripod(TripodSlot slot) {
-        if (GeneralConfig.disabled) {
-            AboveHotbarHUD.renderTextAboveHotbar(StatCollector.translateToLocal("msg.freecam.disable"), 20, true, true);
+        if (FreecamSettings.disabled()) {
+            AboveHotbarHUD.renderTextAboveHotbar(StatCollector.translateToLocal("msg.freecam.denied"), 20, true, true);
             return;
         }
 
@@ -107,7 +113,7 @@ public class FreecamController {
     }
 
     public void enable() {
-        if (active || GeneralConfig.disabled || mc.thePlayer == null || mc.theWorld == null) return;
+        if (active || FreecamSettings.disabled() || mc.thePlayer == null || mc.theWorld == null) return;
 
         cameraEntity = new CameraEntity(mc.theWorld, mc.thePlayer);
         cameraEntity.setCollisionMode(GeneralConfig.collisionMode);
@@ -123,10 +129,12 @@ public class FreecamController {
         velocityZ = 0;
 
         applyPerspectiveOffset();
+        // Collapse prev onto the offset position so the first frame does not lerp from the player.
+        cameraEntity.onUpdate();
     }
 
     private void enableTripod(TripodSlot slot) {
-        if (active || GeneralConfig.disabled || mc.thePlayer == null || mc.theWorld == null) return;
+        if (active || FreecamSettings.disabled() || mc.thePlayer == null || mc.theWorld == null) return;
 
         cameraEntity = tripodRegistry.getOrCreate(slot);
         cameraEntity.setCollisionMode(GeneralConfig.collisionMode);
@@ -248,12 +256,22 @@ public class FreecamController {
     }
 
     public void tick() {
-        if (pendingDisable || GeneralConfig.disabled) {
+        if (FreecamSettings.disabled()) {
+            if (active) {
+                disable();
+                AboveHotbarHUD
+                    .renderTextAboveHotbar(StatCollector.translateToLocal("msg.freecam.denied"), 20, true, true);
+            }
+            pendingDisable = false;
+            return;
+        }
+
+        if (pendingDisable) {
             disable();
         }
         pendingDisable = false;
 
-        if (!active || cameraEntity == null || mc.isGamePaused()) return;
+        if (!active || cameraEntity == null) return;
 
         if (mc.thePlayer != null && mc.thePlayer.isDead) {
             disable();
@@ -262,6 +280,15 @@ public class FreecamController {
 
         if (cameraEntity.worldObj != mc.theWorld) {
             disable();
+            return;
+        }
+
+        // Input is blocked, but prev/last positions must still be synced.
+        if (mc.isGamePaused() || mc.currentScreen != null) {
+            cameraEntity.onUpdate();
+            velocityX = 0;
+            velocityY = 0;
+            velocityZ = 0;
             return;
         }
 
