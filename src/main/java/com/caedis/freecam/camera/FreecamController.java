@@ -257,7 +257,15 @@ public class FreecamController {
         }
         pendingDisable = false;
 
-        if (!active || cameraEntity == null || mc.isGamePaused()) return;
+        if (!active || cameraEntity == null) return;
+
+        if (mc.currentScreen != null) {
+            velocityX = 0;
+            velocityY = 0;
+            velocityZ = 0;
+        }
+
+        if (mc.isGamePaused()) return;
 
         if (mc.thePlayer != null && mc.thePlayer.isDead) {
             disable();
@@ -275,9 +283,7 @@ public class FreecamController {
         if (playerControlled) return;
 
         if (mc.currentScreen != null) {
-            velocityX = 0;
-            velocityY = 0;
-            velocityZ = 0;
+            clampToRenderDistance();
             return;
         }
 
