@@ -1,11 +1,10 @@
 package com.caedis.freecam.camera;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.StatCollector;
-
-import org.lwjgl.input.Keyboard;
 
 import com.caedis.freecam.camera.tripod.TripodRegistry;
 import com.caedis.freecam.camera.tripod.TripodSlot;
@@ -159,7 +158,10 @@ public class FreecamController {
     public void disable() {
         if (!active) return;
 
-        mc.renderViewEntity = previousRenderViewEntity;
+        // Respawns and dimension changes can replace the player saved when freecam was enabled.
+        mc.renderViewEntity = previousRenderViewEntity == null
+            || previousRenderViewEntity instanceof EntityClientPlayerMP
+            || previousRenderViewEntity.worldObj != mc.theWorld ? mc.thePlayer : previousRenderViewEntity;
         mc.gameSettings.thirdPersonView = previousPerspective;
         previousPerspective = -1;
         previousRenderViewEntity = null;
@@ -280,13 +282,13 @@ public class FreecamController {
         }
 
         GameSettings gs = mc.gameSettings;
-        boolean forward = Keyboard.isKeyDown(gs.keyBindForward.getKeyCode());
-        boolean back = Keyboard.isKeyDown(gs.keyBindBack.getKeyCode());
-        boolean left = Keyboard.isKeyDown(gs.keyBindLeft.getKeyCode());
-        boolean right = Keyboard.isKeyDown(gs.keyBindRight.getKeyCode());
-        boolean up = Keyboard.isKeyDown(gs.keyBindJump.getKeyCode());
-        boolean down = Keyboard.isKeyDown(gs.keyBindSneak.getKeyCode());
-        boolean sprint = Keyboard.isKeyDown(gs.keyBindSprint.getKeyCode());
+        boolean forward = GameSettings.isKeyDown(gs.keyBindForward);
+        boolean back = GameSettings.isKeyDown(gs.keyBindBack);
+        boolean left = GameSettings.isKeyDown(gs.keyBindLeft);
+        boolean right = GameSettings.isKeyDown(gs.keyBindRight);
+        boolean up = GameSettings.isKeyDown(gs.keyBindJump);
+        boolean down = GameSettings.isKeyDown(gs.keyBindSneak);
+        boolean sprint = GameSettings.isKeyDown(gs.keyBindSprint);
 
         double speed = MovementConfig.speed * speedMultiplier;
         if (sprint) {
