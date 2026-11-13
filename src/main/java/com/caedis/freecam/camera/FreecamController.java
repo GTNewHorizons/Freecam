@@ -1,6 +1,7 @@
 package com.caedis.freecam.camera;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.StatCollector;
@@ -157,7 +158,10 @@ public class FreecamController {
     public void disable() {
         if (!active) return;
 
-        mc.renderViewEntity = previousRenderViewEntity;
+        // Respawns and dimension changes can replace the player saved when freecam was enabled.
+        mc.renderViewEntity = previousRenderViewEntity == null
+            || previousRenderViewEntity instanceof EntityClientPlayerMP
+            || previousRenderViewEntity.worldObj != mc.theWorld ? mc.thePlayer : previousRenderViewEntity;
         mc.gameSettings.thirdPersonView = previousPerspective;
         previousPerspective = -1;
         previousRenderViewEntity = null;
@@ -253,7 +257,15 @@ public class FreecamController {
         }
         pendingDisable = false;
 
-        if (!active || cameraEntity == null || mc.isGamePaused()) return;
+        if (!active || cameraEntity == null) return;
+
+        if (mc.currentScreen != null) {
+            velocityX = 0;
+            velocityY = 0;
+            velocityZ = 0;
+        }
+
+        if (mc.isGamePaused()) return;
 
         if (mc.thePlayer != null && mc.thePlayer.isDead) {
             disable();
@@ -269,6 +281,11 @@ public class FreecamController {
         cameraEntity.onUpdate();
 
         if (playerControlled) return;
+
+        if (mc.currentScreen != null) {
+            clampToRenderDistance();
+            return;
+        }
 
         GameSettings gs = mc.gameSettings;
         boolean forward = GameSettings.isKeyDown(gs.keyBindForward);
