@@ -153,7 +153,9 @@ public class ClientEventHandler {
     }
 
     private boolean matchesKeyBinding(KeyBinding binding, int keyCode) {
-        if (keyCode != binding.getKeyCode()) return false;
+        int bound = binding.getKeyCode();
+        if (bound == Keyboard.KEY_NONE || keyCode == Keyboard.KEY_NONE) return false;
+        if (keyCode != bound) return false;
         if (Mods.CONTROLLING.isLoaded()) return isComboModifierActive(binding);
         return true;
     }
