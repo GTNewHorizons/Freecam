@@ -7,6 +7,7 @@ import com.gtnewhorizon.gtnhmixins.builders.TargetModBuilder;
 
 public enum TargetedMod implements ITargetMod {
 
+    ANGELICA(null, "angelica"),
     WAILA(null, "Waila"),
     THAUMCRAFT(null, "Thaumcraft"),
     HOLOINVENTORY(null, "holoinventory");

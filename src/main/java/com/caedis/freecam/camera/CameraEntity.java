@@ -19,12 +19,14 @@ import net.minecraft.world.World;
 import com.caedis.freecam.config.GeneralConfig;
 import com.mojang.authlib.GameProfile;
 
+import lombok.Getter;
 import lombok.Setter;
 
 public class CameraEntity extends EntityPlayer {
 
     private static final GameProfile CAMERA_PROFILE = new GameProfile(null, "FreeCamEntity");
 
+    @Getter
     @Setter
     private GeneralConfig.CollisionMode collisionMode = GeneralConfig.CollisionMode.FULL;
 
